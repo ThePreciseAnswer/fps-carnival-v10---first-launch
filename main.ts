@@ -208,6 +208,16 @@ function Anim () {
         })
     })
 }
+sprites.onOverlap(SpriteKind.DuckHitter, SpriteKind.GreenDuck, function (sprite, otherSprite) {
+    music.play(music.createSoundEffect(WaveShape.Sine, 3075, 200, 255, 0, 150, SoundExpressionEffect.Tremolo, InterpolationCurve.Logarithmic), music.PlaybackMode.InBackground)
+    otherSprite.setKind(SpriteKind.NonTouchableObject)
+    otherSprite.vx = 0
+    otherSprite.vy = -40
+    info.changeCountdownBy(6)
+    timer.after(50, function () {
+        otherSprite.ay = 60
+    })
+})
 info.onCountdownEnd(function () {
     if (IfFPSCarnivalGameActive == true) {
         EndAnimation2 = sprites.create(assets.image`AnimPlaceHolder`, SpriteKind.EndAnimation)
@@ -256,27 +266,6 @@ function GreenduckFuncF () {
     true
     )
 }
-sprites.onOverlap(SpriteKind.DuckHitter, SpriteKind.RedDuck, function (sprite3, otherSprite3) {
-    music.play(music.createSoundEffect(WaveShape.Sine, 600, 200, 255, 0, 150, SoundExpressionEffect.Warble, InterpolationCurve.Linear), music.PlaybackMode.InBackground)
-    otherSprite3.setKind(SpriteKind.NonTouchableObject)
-    otherSprite3.vx = 0
-    otherSprite3.vy = -40
-    info.changeScoreBy(-6)
-    info.changeCountdownBy(-3)
-    timer.after(50, function () {
-        otherSprite3.ay = 60
-    })
-})
-sprites.onOverlap(SpriteKind.DuckHitter, SpriteKind.YellowDuck, function (sprite2, otherSprite2) {
-    music.play(music.createSoundEffect(WaveShape.Sine, 200, 600, 255, 0, 150, SoundExpressionEffect.None, InterpolationCurve.Linear), music.PlaybackMode.InBackground)
-    otherSprite2.setKind(SpriteKind.NonTouchableObject)
-    otherSprite2.vx = 0
-    otherSprite2.vy = -40
-    info.changeScoreBy(4)
-    timer.after(50, function () {
-        otherSprite2.ay = 60
-    })
-})
 function InitalizeInGameTools () {
     Ball = sprites.create(assets.image`Ball`, SpriteKind.BallLauncher)
     Ball.z = 10
@@ -312,14 +301,15 @@ controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
         }
     }
 })
-sprites.onOverlap(SpriteKind.DuckHitter, SpriteKind.GreenDuck, function (sprite, otherSprite) {
-    music.play(music.createSoundEffect(WaveShape.Sine, 3075, 200, 255, 0, 150, SoundExpressionEffect.Tremolo, InterpolationCurve.Logarithmic), music.PlaybackMode.InBackground)
-    otherSprite.setKind(SpriteKind.NonTouchableObject)
-    otherSprite.vx = 0
-    otherSprite.vy = -40
-    info.changeCountdownBy(6)
+sprites.onOverlap(SpriteKind.DuckHitter, SpriteKind.RedDuck, function (sprite3, otherSprite3) {
+    music.play(music.createSoundEffect(WaveShape.Sine, 600, 200, 255, 0, 150, SoundExpressionEffect.Warble, InterpolationCurve.Linear), music.PlaybackMode.InBackground)
+    otherSprite3.setKind(SpriteKind.NonTouchableObject)
+    otherSprite3.vx = 0
+    otherSprite3.vy = -40
+    info.changeScoreBy(-6)
+    info.changeCountdownBy(-3)
     timer.after(50, function () {
-        otherSprite.ay = 60
+        otherSprite3.ay = 60
     })
 })
 function Countdown () {
@@ -484,6 +474,16 @@ function GreenduckFunc () {
     true
     )
 }
+sprites.onOverlap(SpriteKind.DuckHitter, SpriteKind.YellowDuck, function (sprite2, otherSprite2) {
+    music.play(music.createSoundEffect(WaveShape.Sine, 200, 600, 255, 0, 150, SoundExpressionEffect.None, InterpolationCurve.Linear), music.PlaybackMode.InBackground)
+    otherSprite2.setKind(SpriteKind.NonTouchableObject)
+    otherSprite2.vx = 0
+    otherSprite2.vy = -40
+    info.changeScoreBy(4)
+    timer.after(50, function () {
+        otherSprite2.ay = 60
+    })
+})
 let RedDuckSpr: Sprite = null
 let YellowDuckSpr: Sprite = null
 let CounterGuyv2: Sprite = null

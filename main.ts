@@ -213,38 +213,10 @@ sprites.onOverlap(SpriteKind.DuckHitter, SpriteKind.GreenDuck, function (sprite,
     otherSprite.setKind(SpriteKind.NonTouchableObject)
     otherSprite.vx = 0
     otherSprite.vy = -40
-    info.changeCountdownBy(6)
+    CountDown += 5
     timer.after(50, function () {
         otherSprite.ay = 60
     })
-})
-info.onCountdownEnd(function () {
-    if (IfFPSCarnivalGameActive == true) {
-        EndAnimation2 = sprites.create(assets.image`AnimPlaceHolder`, SpriteKind.EndAnimation)
-        EndAnimation2.z = 12
-        ReadyController = 0
-        if (info.score() >= 100) {
-            animation.runImageAnimation(
-            EndAnimation2,
-            assets.animation`Good Animation`,
-            400,
-            false
-            )
-            timer.after(2800, function () {
-                game.reset()
-            })
-        } else {
-            animation.runImageAnimation(
-            EndAnimation2,
-            assets.animation`Bad Animation`,
-            400,
-            false
-            )
-            timer.after(2800, function () {
-                game.reset()
-            })
-        }
-    }
 })
 function ResetBall () {
     sprites.destroyAllSpritesOfKind(SpriteKind.BallLauncher)
@@ -306,8 +278,8 @@ sprites.onOverlap(SpriteKind.DuckHitter, SpriteKind.RedDuck, function (sprite3, 
     otherSprite3.setKind(SpriteKind.NonTouchableObject)
     otherSprite3.vx = 0
     otherSprite3.vy = -40
-    info.changeScoreBy(-6)
-    info.changeCountdownBy(-3)
+    SCORE += -4
+    CountDown += -3
     timer.after(50, function () {
         otherSprite3.ay = 60
     })
@@ -452,11 +424,33 @@ function Countdown () {
         )
         timer.after(1500, function () {
             CountDownOver = 1
+            Points = textsprite.create("")
+            Points.z = 14
+            Points.setOutline(1, 4)
+            Points.setPosition(130, 10)
+            animation.runMovementAnimation(
+            Points,
+            animation.animationPresets(animation.bobbing),
+            3000,
+            true
+            )
+            SCORE = 0
         })
         timer.background(function () {
-            timer.after(2000, function () {
+            timer.after(1500, function () {
+                CountDownP = textsprite.create("")
+                CountDownP.z = 14
+                CountDownP.setOutline(1, 4)
+                CountDownP.setPosition(27, 10)
                 sprites.destroy(CounterGuyv2)
-                info.startCountdown(35)
+                animation.runMovementAnimation(
+                CountDownP,
+                animation.animationPresets(animation.bobbing),
+                3000,
+                true
+                )
+                CountDown = 35
+                FinalScreen = 0
             })
         })
     })
@@ -479,17 +473,22 @@ sprites.onOverlap(SpriteKind.DuckHitter, SpriteKind.YellowDuck, function (sprite
     otherSprite2.setKind(SpriteKind.NonTouchableObject)
     otherSprite2.vx = 0
     otherSprite2.vy = -40
-    info.changeScoreBy(4)
+    SCORE += 4
     timer.after(50, function () {
         otherSprite2.ay = 60
     })
 })
 let RedDuckSpr: Sprite = null
 let YellowDuckSpr: Sprite = null
+let FinalScreen = 0
+let CountDownP: TextSprite = null
+let Points: TextSprite = null
 let CounterGuyv2: Sprite = null
 let CountDownOver = 0
+let SCORE = 0
 let GreenDuckSpr: Sprite = null
 let Ball: Sprite = null
+let CountDown = 0
 let EndAnimation2: Sprite = null
 let FrontalDrapes: Sprite = null
 let FrontalWaves: Sprite = null
@@ -601,17 +600,6 @@ timer.after(GuySpeak + 500, function () {
 game.onUpdateInterval(1, function () {
     if (IfFPSCarnivalGameActive == true) {
         if (TargetActive == 1) {
-            if (DecoyBallSpr.y <= TargetSpr.y) {
-                DecoyBallSpr.vy = 0
-                DecoyBallSpr.setKind(SpriteKind.DuckHitter)
-                Anim()
-            }
-        }
-    }
-})
-game.onUpdateInterval(1, function () {
-    if (IfFPSCarnivalGameActive == true) {
-        if (TargetActive == 1) {
             if (DecoyBallSpr.y < TargetSpr.y + 20) {
                 if (TargetSpr.y < 50) {
                     DecoyBallSpr.scale += -0.3
@@ -622,6 +610,32 @@ game.onUpdateInterval(1, function () {
                 DecoyBallSpr.scale += 0.1
             }
         }
+    }
+})
+game.onUpdateInterval(1, function () {
+    if (IfFPSCarnivalGameActive == true) {
+        if (TargetActive == 1) {
+            if (DecoyBallSpr.y <= TargetSpr.y) {
+                DecoyBallSpr.vy = 0
+                DecoyBallSpr.setKind(SpriteKind.DuckHitter)
+                Anim()
+            }
+        }
+    }
+})
+game.onUpdate(function () {
+    if (CountDownOver == 1) {
+        Points.setText("Points: " + SCORE)
+    }
+})
+game.onUpdate(function () {
+    if (CountDownOver == 1) {
+        Points.setText("Points: " + SCORE)
+    }
+})
+game.onUpdate(function () {
+    if (CountDownOver == 1) {
+        CountDownP.setText("Time: " + CountDown)
     }
 })
 game.onUpdateInterval(2000, function () {
@@ -706,6 +720,41 @@ game.onUpdateInterval(1000, function () {
             )
         } else {
             GreenduckFuncF()
+        }
+    }
+})
+game.onUpdateInterval(1000, function () {
+    if (CountDownOver == 1) {
+        if (CountDown > 0) {
+            CountDown += -1
+        } else {
+            if (FinalScreen == 0) {
+                FinalScreen = 1
+                EndAnimation2 = sprites.create(assets.image`AnimPlaceHolder`, SpriteKind.EndAnimation)
+                EndAnimation2.z = 18
+                ReadyController = 0
+                if (SCORE >= 100) {
+                    animation.runImageAnimation(
+                    EndAnimation2,
+                    assets.animation`Good Animation`,
+                    400,
+                    false
+                    )
+                    timer.after(2800, function () {
+                        game.reset()
+                    })
+                } else {
+                    animation.runImageAnimation(
+                    EndAnimation2,
+                    assets.animation`Bad Animation`,
+                    400,
+                    false
+                    )
+                    timer.after(2800, function () {
+                        game.reset()
+                    })
+                }
+            }
         }
     }
 })

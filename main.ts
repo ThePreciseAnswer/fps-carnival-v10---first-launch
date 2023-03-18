@@ -12,7 +12,23 @@ namespace SpriteKind {
     export const EndAnimation = SpriteKind.create()
     export const Tutorial = SpriteKind.create()
     export const CounterGuyO = SpriteKind.create()
+    export const ExplosiveDuck = SpriteKind.create()
+    export const LotteryDuck = SpriteKind.create()
+    export const BigDuck = SpriteKind.create()
+    export const TimeLotDuck = SpriteKind.create()
+    export const SmallDuck = SpriteKind.create()
 }
+sprites.onOverlap(SpriteKind.DuckHitter, SpriteKind.SmallDuck, function (sprite2, otherSprite2) {
+    music.play(music.createSoundEffect(WaveShape.Triangle, 300, 200, 255, 0, 500, SoundExpressionEffect.Warble, InterpolationCurve.Curve), music.PlaybackMode.InBackground)
+    otherSprite2.setKind(SpriteKind.NonTouchableObject)
+    otherSprite2.vx = 0
+    otherSprite2.vy = -40
+    SCORE += SCORE * 1.2
+    SCORE = Math.round(SCORE)
+    timer.after(50, function () {
+        otherSprite2.ay = 60
+    })
+})
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (IfFPSCarnivalGameActive == true) {
         if (TargetActive != 1 && TargetSpr.y < 59 && ReadyController == 1) {
@@ -26,6 +42,7 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
             DecoyBallSpr.z = 10
             DecoyBallSpr.vy = -50
             music.play(music.createSoundEffect(WaveShape.Noise, 137, 2808, 255, 0, 750, SoundExpressionEffect.None, InterpolationCurve.Linear), music.PlaybackMode.InBackground)
+            sprites.destroyAllSpritesOfKind(SpriteKind.BallLauncher)
         }
     } else {
         if (FPSCarnivalSetup == true) {
@@ -159,6 +176,12 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
         }
     }
 })
+function SDPBottomHalf (Duck: Sprite) {
+    Duck.z = 5
+    Duck.setPosition(160, 50)
+    Duck.vx = -30
+    Duck.setFlag(SpriteFlag.AutoDestroy, true)
+}
 function FPSCarnivalSetupSpr () {
     IfFPSCarnivalGameActive = true
     BackwardialWaves = sprites.create(assets.image`BackwardialWaves`, SpriteKind.NonTouchableObject)
@@ -238,6 +261,55 @@ function GreenduckFuncF () {
     true
     )
 }
+sprites.onOverlap(SpriteKind.DuckHitter, SpriteKind.LotteryDuck, function (sprite2, otherSprite2) {
+    otherSprite2.startEffect(effects.warmRadial)
+    otherSprite2.sayText("JACKPOT!", 2000, true)
+    music.play(music.createSoundEffect(WaveShape.Noise, 1, 3313, 255, 37, 500, SoundExpressionEffect.Vibrato, InterpolationCurve.Logarithmic), music.PlaybackMode.InBackground)
+    otherSprite2.setKind(SpriteKind.NonTouchableObject)
+    otherSprite2.vx = 0
+    otherSprite2.vy = -40
+    SCORE += 8
+    timer.after(50, function () {
+        otherSprite2.ay = 60
+    })
+})
+sprites.onOverlap(SpriteKind.DuckHitter, SpriteKind.BigDuck, function (sprite2, otherSprite2) {
+    music.play(music.createSoundEffect(WaveShape.Triangle, 300, 200, 255, 0, 500, SoundExpressionEffect.Warble, InterpolationCurve.Curve), music.PlaybackMode.InBackground)
+    otherSprite2.setKind(SpriteKind.NonTouchableObject)
+    otherSprite2.vx = 0
+    otherSprite2.vy = -40
+    timer.after(50, function () {
+        otherSprite2.ay = 60
+    })
+})
+sprites.onOverlap(SpriteKind.DuckHitter, SpriteKind.YellowDuck, function (sprite2, otherSprite2) {
+    music.play(music.createSoundEffect(WaveShape.Sine, 200, 600, 255, 0, 150, SoundExpressionEffect.None, InterpolationCurve.Linear), music.PlaybackMode.InBackground)
+    otherSprite2.setKind(SpriteKind.NonTouchableObject)
+    otherSprite2.vx = 0
+    otherSprite2.vy = -40
+    SCORE += 4
+    timer.after(50, function () {
+        otherSprite2.ay = 60
+    })
+})
+sprites.onOverlap(SpriteKind.DuckHitter, SpriteKind.ExplosiveDuck, function (sprite2, otherSprite2) {
+    scene.cameraShake(4, 500)
+    music.play(music.createSoundEffect(WaveShape.Noise, 2333, 600, 255, 0, 500, SoundExpressionEffect.Warble, InterpolationCurve.Linear), music.PlaybackMode.InBackground)
+    otherSprite2.setKind(SpriteKind.NonTouchableObject)
+    otherSprite2.vx = 0
+    otherSprite2.vy = -40
+    for (let index = 0; index < 5; index++) {
+        ExplosionBall = sprites.create(assets.image`ModdedMultiball`, SpriteKind.DuckHitter)
+        ExplosionBall.setPosition(otherSprite2.x, otherSprite2.y)
+        ExplosionBall.vx = randint(randint(-100, -50), randint(50, 100))
+        ExplosionBall.vy = randint(-100, -50)
+        ExplosionBall.z = 9
+        ExplosionBall.setFlag(SpriteFlag.AutoDestroy, true)
+    }
+    timer.after(50, function () {
+        otherSprite2.ay = 60
+    })
+})
 function InitalizeInGameTools () {
     Ball = sprites.create(assets.image`Ball`, SpriteKind.BallLauncher)
     Ball.z = 10
@@ -272,6 +344,18 @@ controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
             TutorialNumber += 1
         }
     }
+})
+sprites.onOverlap(SpriteKind.DuckHitter, SpriteKind.TimeLotDuck, function (sprite2, otherSprite2) {
+    otherSprite2.startEffect(effects.warmRadial)
+    otherSprite2.sayText("PAST NOON", 2000, true)
+    music.play(music.createSoundEffect(WaveShape.Noise, 1, 5000, 255, 34, 500, SoundExpressionEffect.Vibrato, InterpolationCurve.Logarithmic), music.PlaybackMode.InBackground)
+    otherSprite2.setKind(SpriteKind.NonTouchableObject)
+    otherSprite2.vx = 0
+    otherSprite2.vy = -40
+    CountDown += 8
+    timer.after(50, function () {
+        otherSprite2.ay = 60
+    })
 })
 sprites.onOverlap(SpriteKind.DuckHitter, SpriteKind.RedDuck, function (sprite3, otherSprite3) {
     music.play(music.createSoundEffect(WaveShape.Sine, 600, 200, 255, 0, 150, SoundExpressionEffect.Warble, InterpolationCurve.Linear), music.PlaybackMode.InBackground)
@@ -468,16 +552,105 @@ function GreenduckFunc () {
     true
     )
 }
-sprites.onOverlap(SpriteKind.DuckHitter, SpriteKind.YellowDuck, function (sprite2, otherSprite2) {
-    music.play(music.createSoundEffect(WaveShape.Sine, 200, 600, 255, 0, 150, SoundExpressionEffect.None, InterpolationCurve.Linear), music.PlaybackMode.InBackground)
-    otherSprite2.setKind(SpriteKind.NonTouchableObject)
-    otherSprite2.vx = 0
-    otherSprite2.vy = -40
-    SCORE += 4
-    timer.after(50, function () {
-        otherSprite2.ay = 60
-    })
-})
+function ModdedDucksMode () {
+    if (Math.percentChance(50)) {
+        if (Math.percentChance(80)) {
+            if (Math.percentChance(90)) {
+                YellowDuckSpr = sprites.create(assets.image`Duck`, SpriteKind.YellowDuck)
+                YellowDuckSpr.z = 5
+                YellowDuckSpr.setPosition(160, 50)
+                YellowDuckSpr.vx = -30
+                YellowDuckSpr.setFlag(SpriteFlag.AutoDestroy, true)
+                animation.runImageAnimation(
+                YellowDuckSpr,
+                assets.animation`DuckAnimation`,
+                200,
+                true
+                )
+            } else {
+                GreenduckFunc()
+            }
+        } else if (Math.percentChance(90)) {
+            RedDuckSpr = sprites.create(assets.image`RedDuck`, SpriteKind.RedDuck)
+            RedDuckSpr.z = 5
+            RedDuckSpr.setPosition(160, 50)
+            RedDuckSpr.vx = -30
+            RedDuckSpr.setFlag(SpriteFlag.AutoDestroy, true)
+            animation.runImageAnimation(
+            RedDuckSpr,
+            assets.animation`DuckAnimation0`,
+            200,
+            true
+            )
+        } else {
+            GreenduckFunc()
+        }
+    } else {
+        ModPickerPercentile = randint(1, 75)
+        if (ModPickerPercentile < 25) {
+            ExplosiveDuckSpr = sprites.create(assets.image`ModdedExpansionDuck`, SpriteKind.ExplosiveDuck)
+            SDPBottomHalf(ExplosiveDuckSpr)
+            animation.runImageAnimation(
+            ExplosiveDuckSpr,
+            assets.animation`ExplosionDuck`,
+            200,
+            true
+            )
+        } else {
+            if (ModPickerPercentile < 50) {
+                BigDuckorSmallDuck = randint(1, 2)
+                if (BigDuckorSmallDuck == 1) {
+                    SizeDuck = sprites.create(assets.image`Duck`, SpriteKind.BigDuck)
+                    SDPBottomHalf(SizeDuck)
+                    animation.runImageAnimation(
+                    SizeDuck,
+                    assets.animation`DuckAnimation`,
+                    200,
+                    true
+                    )
+                    SizeDuck.changeScale(2, ScaleAnchor.Middle)
+                } else {
+                    SizeDuck = sprites.create(assets.image`Duck`, SpriteKind.SmallDuck)
+                    SDPBottomHalf(SizeDuck)
+                    animation.runImageAnimation(
+                    SizeDuck,
+                    assets.animation`DuckAnimation`,
+                    200,
+                    true
+                    )
+                    SizeDuck.changeScale(-0.4, ScaleAnchor.Middle)
+                }
+            } else {
+                MorePointsorMoreTime = randint(1, 2)
+                if (MorePointsorMoreTime == 1) {
+                    LotteryDuckSpr = sprites.create(assets.image`ModdedExpansionDuck`, SpriteKind.LotteryDuck)
+                    SDPBottomHalf(LotteryDuckSpr)
+                    animation.runImageAnimation(
+                    LotteryDuckSpr,
+                    assets.animation`LotteryDuck`,
+                    200,
+                    true
+                    )
+                } else {
+                    LotteryDuckSpr = sprites.create(assets.image`ModdedExpansionDuck`, SpriteKind.TimeLotDuck)
+                    SDPBottomHalf(LotteryDuckSpr)
+                    animation.runImageAnimation(
+                    LotteryDuckSpr,
+                    assets.animation`ClockDuck`,
+                    200,
+                    true
+                    )
+                }
+            }
+        }
+    }
+}
+let LotteryDuckSpr: Sprite = null
+let MorePointsorMoreTime = 0
+let SizeDuck: Sprite = null
+let BigDuckorSmallDuck = 0
+let ExplosiveDuckSpr: Sprite = null
+let ModPickerPercentile = 0
 let RedDuckSpr: Sprite = null
 let YellowDuckSpr: Sprite = null
 let FinalScreen = 0
@@ -485,7 +658,7 @@ let CountDownP: TextSprite = null
 let Points: TextSprite = null
 let CounterGuyv2: Sprite = null
 let CountDownOver = 0
-let SCORE = 0
+let ExplosionBall: Sprite = null
 let GreenDuckSpr: Sprite = null
 let Ball: Sprite = null
 let CountDown = 0
@@ -498,8 +671,15 @@ let ReadyController = 0
 let TargetSpr: Sprite = null
 let TargetActive = 0
 let IfFPSCarnivalGameActive = false
+let SCORE = 0
 let TutorialNumber = 0
 let FPSCarnivalSetup = false
+let ModdedDucks = 0
+if (game.ask("Activate Modded Ducks!", "Warning: May be fun!")) {
+    ModdedDucks = 1
+} else {
+    ModdedDucks = 0
+}
 FPSCarnivalSetup = true
 scene.setBackgroundImage(assets.image`Logo`)
 let CounterGuy = sprites.create(img`
@@ -640,36 +820,40 @@ game.onUpdate(function () {
 })
 game.onUpdateInterval(2000, function () {
     if (IfFPSCarnivalGameActive == true && CountDownOver == 1) {
-        if (Math.percentChance(80)) {
-            if (Math.percentChance(90)) {
-                YellowDuckSpr = sprites.create(assets.image`Duck`, SpriteKind.YellowDuck)
-                YellowDuckSpr.z = 5
-                YellowDuckSpr.setPosition(160, 50)
-                YellowDuckSpr.vx = -30
-                YellowDuckSpr.setFlag(SpriteFlag.AutoDestroy, true)
+        if (ModdedDucks == 1) {
+            ModdedDucksMode()
+        } else {
+            if (Math.percentChance(80)) {
+                if (Math.percentChance(90)) {
+                    YellowDuckSpr = sprites.create(assets.image`Duck`, SpriteKind.YellowDuck)
+                    YellowDuckSpr.z = 5
+                    YellowDuckSpr.setPosition(160, 50)
+                    YellowDuckSpr.vx = -30
+                    YellowDuckSpr.setFlag(SpriteFlag.AutoDestroy, true)
+                    animation.runImageAnimation(
+                    YellowDuckSpr,
+                    assets.animation`DuckAnimation`,
+                    200,
+                    true
+                    )
+                } else {
+                    GreenduckFunc()
+                }
+            } else if (Math.percentChance(90)) {
+                RedDuckSpr = sprites.create(assets.image`RedDuck`, SpriteKind.RedDuck)
+                RedDuckSpr.z = 5
+                RedDuckSpr.setPosition(160, 50)
+                RedDuckSpr.vx = -30
+                RedDuckSpr.setFlag(SpriteFlag.AutoDestroy, true)
                 animation.runImageAnimation(
-                YellowDuckSpr,
-                assets.animation`DuckAnimation`,
+                RedDuckSpr,
+                assets.animation`DuckAnimation0`,
                 200,
                 true
                 )
             } else {
                 GreenduckFunc()
             }
-        } else if (Math.percentChance(90)) {
-            RedDuckSpr = sprites.create(assets.image`RedDuck`, SpriteKind.RedDuck)
-            RedDuckSpr.z = 5
-            RedDuckSpr.setPosition(160, 50)
-            RedDuckSpr.vx = -30
-            RedDuckSpr.setFlag(SpriteFlag.AutoDestroy, true)
-            animation.runImageAnimation(
-            RedDuckSpr,
-            assets.animation`DuckAnimation0`,
-            200,
-            true
-            )
-        } else {
-            GreenduckFunc()
         }
     }
 })
